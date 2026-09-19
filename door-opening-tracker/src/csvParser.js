@@ -70,7 +70,7 @@ export function getThresholdSeconds(equip) {
 export function calculateCompliance(equip, doorOpeningSeconds) {
   const threshold = getThresholdSeconds(equip);
 
-  if (threshold === null || doorOpeningSeconds === null) {
+  if (threshold === null || !Number.isFinite(doorOpeningSeconds)) {
     return null;
   }
 

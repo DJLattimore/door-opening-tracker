@@ -1,10 +1,11 @@
 // src/compliance.js
 export function getAircraftType(code = "") {
+  const aircraft = String(code).trim();
   const narrow = ["738", "319", "320", "321"];
   const wide = ["787", "777"];
 
-  if (narrow.some(prefix => code.startsWith(prefix))) return "NARROW";
-  if (wide.some(prefix => code.startsWith(prefix))) return "WIDE";
+  if (narrow.some(prefix => aircraft.startsWith(prefix))) return "NARROW";
+  if (wide.some(prefix => aircraft.startsWith(prefix))) return "WIDE";
   return "UNKNOWN";
 }
 
@@ -15,12 +16,23 @@ export function getTargetSeconds(type) {
 }
 
 export function parseDoorOpening(raw) {
-  if (!raw || raw === "—") return null;
-  const [min, sec] = raw.split(":").map(Number);
-  return min * 60 + sec;
+  if (raw === null || raw === undefined || raw === "" || raw === "—") {
+    return null;
+  }
+
+  const text = String(raw).trim();
+  const parts = text.split(":").map(Number);
+
+  if (parts.length === 2 && parts.every(Number.isFinite)) {
+    const [minutes, seconds] = parts;
+    return minutes * 60 + seconds;
+  }
+
+  const minutes = Number(text);
+  return Number.isFinite(minutes) ? minutes * 60 : null;
 }
 
 export function checkCompliance(doorOpening, target) {
-  if (doorOpening == null || target == null) return null;
+  if (!Number.isFinite(doorOpening) || !Number.isFinite(target)) return null;
   return doorOpening <= target;
 }
